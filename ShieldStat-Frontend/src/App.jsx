@@ -1,0 +1,99 @@
+import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+
+import PublicLayout from "./layouts/PublicLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
+import Landing from "./pages/LandingPage";
+import Auth from "./pages/AuthPage";
+import VerifyEmail from "./pages/VerifyEmailPage";
+import Scan from "./pages/AuditDomain";
+import MalwareScan from "./pages/MalwareScan";
+import ScanDashboard from "./pages/ScanDashboard";
+import ScanDetails from "./pages/ScanDetails";
+import ScanHistory from "./pages/ScanHistory";
+import AdminUsers from "./pages/AdminUsers";
+import AdminSubscription from "./pages/AdminSubscription";
+import Assessment from "./pages/Assessment";
+import MalwareScanHistory from "./pages/MalwareScanHistory";
+import MalwareDashboard from "./pages/MalwareDashboard";
+import Profile from "./pages/Profile";
+
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme === "dark";
+    return false;
+  });
+
+  useEffect(() => {
+    const theme = isDarkMode ? "dark" : "light";
+    const root = document.documentElement;
+    const body = document.body;
+
+    root.classList.toggle("dark", isDarkMode);
+    root.classList.toggle("light", !isDarkMode);
+    body.classList.toggle("dark", isDarkMode);
+    body.classList.toggle("light", !isDarkMode);
+    root.dataset.theme = theme;
+    body.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+  }, [isDarkMode]);
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PublicLayout
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={() => setIsDarkMode((current) => !current)}
+          />
+        }
+      >
+        <Route index element={<Landing />} />
+        <Route path="auth" element={<Auth />} />
+        <Route path="auth/verify-email" element={<VerifyEmail />} />
+      </Route>
+
+      <Route
+        path="/"
+        element={
+          <DashboardLayout
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={() => setIsDarkMode((current) => !current)}
+          />
+        }
+      >
+        <Route path="scan-dashboard" element={<ScanDashboard />} />
+        <Route path="scan-details" element={<ScanDetails />} />
+        <Route path="scan" element={<Scan />} />
+        <Route path="history" element={<ScanHistory />} />
+        <Route path="malware" element={<MalwareScan />} />
+        <Route path="malware-history" element={<MalwareScanHistory />} />
+        <Route path="malware-dashboard" element={<MalwareDashboard />} />
+        <Route path="assessment" element={<Assessment />} />
+        <Route path="assessment/:sectionId" element={<Assessment />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
+
+      {/* Admin area uses its own layout */}
+      <Route
+        path="/admin"
+        element={
+          <AdminLayout
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={() => setIsDarkMode((current) => !current)}
+          />
+        }
+      >
+        <Route index element={<AdminUsers />} />
+        <Route path="subscription" element={<AdminSubscription />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default App;
