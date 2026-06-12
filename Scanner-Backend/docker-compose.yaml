@@ -55,8 +55,7 @@ services:
       - scanner-network
 
 networks:
-  scanner-network:
-    external: true
+  scanner-network: {}
 
 volumes:
   postgres_data:
